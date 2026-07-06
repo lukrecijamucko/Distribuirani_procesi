@@ -120,3 +120,12 @@ Očekujemo da će Chang & Roberts u nepovoljnom rasporedu imati puno veći broj 
 Hirschberg & Sinclair i Petersonov algoritam trebali bi pokazati rast koji odgovara složenosti O(N log N).
 
 Petersonov algoritam posebno je zanimljiv jer postiže sličnu složenost kao H&S, ali u jednosmjernom prstenu.
+
+## Trenutna implementacija eksperimenata
+
+Za sada je implementiran eksperimentalni pokretač `ExperimentRunner.java`.
+
+On pokreće Petersonov algoritam za više veličina prstena:
+
+```text
+N = 3, 5, 10, 50, 100, 500, 1000
