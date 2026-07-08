@@ -1,0 +1,11 @@
+@'
+out/
+*.class
+
+.idea/
+.vscode/
+
+*.log
+.DS_Store
+Thumbs.db
+'@ | Set-Content -Path ".gitignore" -Encoding UTF8

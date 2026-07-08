@@ -1,5 +1,7 @@
 package dp.election;
 
+import dp.election.algorithms.ChangRobertsElection;
+import dp.election.algorithms.HirschbergSinclairElection;
 import dp.election.algorithms.PetersonElection;
 import dp.election.simulator.Ring;
 
@@ -30,35 +32,9 @@ public class ExperimentRunner {
                     for (int run = 1; run <= numberOfRuns; run++) {
                         int[] ids = generateIds(n, testCase, run);
 
-                        Ring ring = new Ring(ids);
-                        PetersonElection peterson = new PetersonElection(ring);
-
-                        peterson.startElection();
-                        ElectionResult result = peterson.getResult();
-
-                        writer.println(
-                                result.getAlgorithmName() + "," +
-                                result.getNumberOfProcesses() + "," +
-                                testCase + "," +
-                                run + "," +
-                                result.getLeaderId() + "," +
-                                result.getExpectedLeaderId() + "," +
-                                result.getMessageCount() + "," +
-                                result.getPhases() + "," +
-                                result.isCorrect()
-                        );
-
-                        System.out.println(
-                                result.getAlgorithmName() +
-                                " | N=" + result.getNumberOfProcesses() +
-                                " | case=" + testCase +
-                                " | run=" + run +
-                                " | leader=" + result.getLeaderId() +
-                                " | expected=" + result.getExpectedLeaderId() +
-                                " | messages=" + result.getMessageCount() +
-                                " | phases=" + result.getPhases() +
-                                " | correct=" + result.isCorrect()
-                        );
+                        runSingleAlgorithm(writer, "Chang-Roberts", ids, testCase, run);
+                        runSingleAlgorithm(writer, "Hirschberg-Sinclair", ids, testCase, run);
+                        runSingleAlgorithm(writer, "Peterson", ids, testCase, run);
                     }
                 }
             }
@@ -69,6 +45,54 @@ public class ExperimentRunner {
         } catch (IOException e) {
             System.err.println("Error while writing results file: " + e.getMessage());
         }
+    }
+
+    private static void runSingleAlgorithm(
+            PrintWriter writer,
+            String algorithmName,
+            int[] ids,
+            String testCase,
+            int run
+    ) {
+        Ring ring = new Ring(ids);
+        Election election;
+
+        if (algorithmName.equals("Chang-Roberts")) {
+            election = new ChangRobertsElection(ring);
+        } else if (algorithmName.equals("Hirschberg-Sinclair")) {
+            election = new HirschbergSinclairElection(ring);
+        } else if (algorithmName.equals("Peterson")) {
+            election = new PetersonElection(ring);
+        } else {
+            throw new IllegalArgumentException("Unknown algorithm: " + algorithmName);
+        }
+
+        election.startElection();
+        ElectionResult result = election.getResult();
+
+        writer.println(
+                result.getAlgorithmName() + "," +
+                result.getNumberOfProcesses() + "," +
+                testCase + "," +
+                run + "," +
+                result.getLeaderId() + "," +
+                result.getExpectedLeaderId() + "," +
+                result.getMessageCount() + "," +
+                result.getPhases() + "," +
+                result.isCorrect()
+        );
+
+        System.out.println(
+                result.getAlgorithmName() +
+                " | N=" + result.getNumberOfProcesses() +
+                " | case=" + testCase +
+                " | run=" + run +
+                " | leader=" + result.getLeaderId() +
+                " | expected=" + result.getExpectedLeaderId() +
+                " | messages=" + result.getMessageCount() +
+                " | phases=" + result.getPhases() +
+                " | correct=" + result.isCorrect()
+        );
     }
 
     private static int[] generateIds(int n, String testCase, int seed) {
