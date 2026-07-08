@@ -17,10 +17,7 @@ public class ChangRobertsElection implements Election {
     private int electedLeaderId = -1;
 
     private int messageCount = 0;
-    private int rounds = 0; // stand-in for ElectionResult's "maxPhase" slot;
-                             // Chang-Roberts has no phase concept, so this
-                             // reports the number of synchronous rounds the
-                             // simulation ran for instead.
+    private int rounds = 0; 
 
     public ChangRobertsElection(Ring ring) {
         this.ring = ring;
@@ -38,7 +35,6 @@ public class ChangRobertsElection implements Election {
 
     @Override
     public void startElection() {
-        // ROUND 0: every process announces its own candidacy to its right neighbor.
         for (int i = 0; i < ring.size(); i++) {
             ProcessState state = states.get(i);
             sendMessage(i, new Message(state.getUid(), i, Message.Type.OUT, Message.Direction.RIGHT, 1));
@@ -62,8 +58,6 @@ public class ChangRobertsElection implements Election {
             }
         }
 
-        // Let the leader-announcement lap finish circulating so every
-        // process has actually learned the result before we return.
         while (ring.hasPendingMessages()) {
             ring.deliverMessages();
             for (int i = 0; i < ring.size(); i++) {
@@ -101,7 +95,6 @@ public class ChangRobertsElection implements Election {
             int candidateId = msg.getCandidateId();
 
             if (candidateId == myState.getUid()) {
-                // My own id survived a full trip around the ring - I win.
                 myState.setLeader();
                 electedLeaderId = candidateId;
 
@@ -111,18 +104,14 @@ public class ChangRobertsElection implements Election {
                 sendMessage(myIndex, new Message(
                         candidateId, msg.getOriginIndex(), Message.Type.OUT, Message.Direction.RIGHT, 1));
             } else {
-                // candidateId < myState.getUid(): I'm bigger, so I stay
-                // silent and drop this message. I've already sent my own
-                // candidacy, so nothing further to do here.
                 myState.defeat();
             }
         } else if (msg.getType() == Message.Type.IN) {
-            // Leader announcement lap.
             if (msg.getOriginIndex() != myIndex) {
                 sendMessage(myIndex, new Message(
                         msg.getCandidateId(), msg.getOriginIndex(), Message.Type.IN, Message.Direction.RIGHT, 1));
             }
-            // else: announcement has returned to the leader; stop forwarding.
+           
         }
     }
 }
