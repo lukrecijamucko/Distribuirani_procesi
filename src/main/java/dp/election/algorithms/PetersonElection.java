@@ -130,6 +130,7 @@ public class PetersonElection implements Election {
         return leader;
     }
 
+    @Override
     public ElectionResult getResult() {
         return new ElectionResult(
                 "Peterson",
