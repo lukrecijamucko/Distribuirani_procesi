@@ -1,6 +1,7 @@
 package dp.election;
 
 import dp.election.algorithms.PetersonElection;
+import dp.election.algorithms.ChangRobertsElection;
 import dp.election.algorithms.HirschbergSinclairElection;
 import dp.election.simulator.Ring;
 
@@ -21,9 +22,12 @@ public class Main {
 
         Ring ring = new Ring(ids);
 
+        ChangRobertsElection cr = new ChangRobertsElection(ring);
+        cr.startElection();
+        System.out.println(cr.getResult());
+
         PetersonElection peterson = new PetersonElection(ring);
         peterson.startElection();
-
         System.out.println(peterson.getResult());
 
         HirschbergSinclairElection HSElection = new HirschbergSinclairElection(ring);
