@@ -51,12 +51,6 @@ public class PetersonElection implements Election {
             if (activeProcesses.size() == 1) {
                 int winnerIndex = activeProcesses.get(0);
                 leader = virtualIds[winnerIndex];
-
-                /*
-                 * Završna obavijest o vođi prolazi kroz cijeli prsten.
-                 * U skripti se kod Changa i Robertsa nakon pobjede šalje poruka tipa leader
-                 * kako bi svi procesi saznali tko je vođa.
-                 */
                 messageCount += n;
                 phases++;
 
@@ -66,22 +60,6 @@ public class PetersonElection implements Election {
             boolean[] newActive = new boolean[n];
             int[] newVirtualIds = virtualIds.clone();
 
-            /*
-             * Visokorazinska fazna simulacija Petersonovog algoritma.
-             *
-             * Ideja:
-             * - aktivni procesi ostaju kandidati
-             * - pasivni procesi samo prosljeđuju poruke
-             * - promatramo samo aktivne procese, kao da se prsten kandidata smanjuje
-             *
-             * Za svaki aktivni proces gledamo:
-             * - njegov trenutni virtualni ID
-             * - ID prethodnog aktivnog kandidata
-             * - ID kandidata prije prethodnog
-             *
-             * Ako prethodni kandidat ima veći ID od oba susjeda u toj usporedbi,
-             * on preživljava i njegov ID se prenosi dalje.
-             */
             for (int position = 0; position < activeProcesses.size(); position++) {
                 int currentIndex = activeProcesses.get(position);
 
@@ -105,10 +83,6 @@ public class PetersonElection implements Election {
                 }
             }
 
-            /*
-             * U jednoj fazi računamo dva prolaza poruka kroz prsten.
-             * Ovo je simulacija broja prijenosa poruka, a ne prava mrežna implementacija.
-             */
             messageCount += 2 * n;
             phases++;
 
